@@ -1,18 +1,17 @@
 <script lang="ts">
-	import  {addTwoNums} from './somefuncs'
+	import  {addTwoNums, getarray} from './somefuncs'
 	import {testmap, colormap} from './lib/colormap'
 	let two = addTwoNums(11, 22);
 	export let name: string;
 	let src = 'images/test.png'
+	let map2 = getarray();
 </script>
 
 <main>
 	<h1>Hello {name}!</h1>
 	<p>Add two numbers produces {two} as sum of 11 plus 22.</p>
-	<p>{testmap[0]}</p>
-	<img {src} alt=''/>
-	
-	
+	<p>{map2[5]}</p>
+	<img {src} alt=''/>	
 </main>
 
 <style>

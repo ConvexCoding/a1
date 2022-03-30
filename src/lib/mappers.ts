@@ -1,8 +1,7 @@
-import { acos, round, sin, sqrt, sum, tan } from 'mathjs'
+import { round, sqrt } from 'mathjs'
 import type { Lens } from './lens'
 import { Vector3D } from './vector'
 import { calcWfeVecs } from './erroranalysis'
-import type {  Ray } from './raytrace'
 
 const zeroDir = new Vector3D(0.0, 0.0, 1.0)
 

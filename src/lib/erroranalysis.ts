@@ -5,7 +5,6 @@ import { trace3DRay } from './raytrace'
 import type {  Ray } from './raytrace'
 
 const zeroDir = new Vector3D(0.0, 0.0, 1.0)
-import Decimal from 'decimal.js'
 
 // next two structs or interfaces used just to facilitate moving the data
 // back to the caller
