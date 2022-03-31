@@ -16598,13 +16598,27 @@ var app = (function () {
     function addTwoNums(n1, n2) {
         return n1 + n2;
     }
-    function getarray() {
+    function getarray(gridsize) {
         let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
         let mat = Material.fromString("FusedSilica");
         let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
-        let newmap = GenWfeMapBits(lens, -0.711, 10.0, 11);
+        let newmap = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
         return newmap;
+    }
+    function getflatarray(gridsize) {
+        let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
+        let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
+        let mat = Material.fromString("FusedSilica");
+        let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
+        let newmap = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
+        var wfemap = new Array();
+        for (let row = 0; row < gridsize; row++) {
+            for (let col = 0; col < gridsize; col++) {
+                wfemap.push(newmap[row][col]);
+            }
+        }
+        return wfemap;
     }
 
     let testmap = [[123, 123, 123, 123, 123, 122, 123, 123, 123, 123, 123],
@@ -16756,10 +16770,20 @@ var app = (function () {
     	let p0;
     	let t7;
     	let p1;
-    	let t9;
+    	let t17;
     	let img;
     	let img_src_value;
-    	let t10;
+    	let t18;
+    	let p2;
+    	let t26;
+    	let p3;
+    	let t30;
+    	let p4;
+    	let t31_value = "image data length: " + "";
+    	let t31;
+    	let t32;
+    	let t33;
+    	let t34;
     	let canvas_1;
 
     	const block = {
@@ -16771,28 +16795,40 @@ var app = (function () {
     			t2 = text("!");
     			t3 = space();
     			p0 = element("p");
-    			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
+    			p0.textContent = `Add two numbers produces ${/*two*/ ctx[3]} as sum of 11 plus 22.`;
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = `${/*map2*/ ctx[4][5]}`;
-    			t9 = space();
+    			p1.textContent = `${/*map2*/ ctx[6][5]}  ${"  *****  "}  ${colormap[2]}  ${" ** "}  ${colormap[2][3]}`;
+    			t17 = space();
     			img = element("img");
-    			t10 = space();
+    			t18 = space();
+    			p2 = element("p");
+    			p2.textContent = `${"map2 Dimensions: "}  ${/*gridsize*/ ctx[5]}  ${" by "}  ${/*gridsize*/ ctx[5]}`;
+    			t26 = space();
+    			p3 = element("p");
+    			p3.textContent = `${"map2.flattend Dimensions: "}  ${/*map2*/ ctx[6].length}`;
+    			t30 = space();
+    			p4 = element("p");
+    			t31 = text(t31_value);
+    			t32 = space();
+    			t33 = text(/*idatal*/ ctx[1]);
+    			t34 = space();
     			canvas_1 = element("canvas");
-    			attr_dev(h1, "class", "svelte-1657ms0");
-    			add_location(h1, file, 28, 1, 865);
-    			add_location(p0, file, 29, 1, 891);
-    			add_location(p1, file, 30, 1, 952);
-    			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[3])) attr_dev(img, "src", img_src_value);
+    			attr_dev(h1, "class", "svelte-x56pa0");
+    			add_location(h1, file, 26, 1, 890);
+    			add_location(p0, file, 27, 1, 916);
+    			add_location(p1, file, 28, 1, 977);
+    			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[4])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
-    			attr_dev(img, "class", "svelte-1657ms0");
-    			add_location(img, file, 31, 1, 970);
-    			attr_dev(canvas_1, "width", 101);
-    			attr_dev(canvas_1, "height", 20);
-    			attr_dev(canvas_1, "class", "svelte-1657ms0");
-    			add_location(canvas_1, file, 32, 1, 992);
-    			attr_dev(main, "class", "svelte-1657ms0");
-    			add_location(main, file, 27, 0, 857);
+    			attr_dev(img, "class", "svelte-x56pa0");
+    			add_location(img, file, 30, 1, 1050);
+    			add_location(p2, file, 31, 1, 1072);
+    			add_location(p3, file, 32, 1, 1133);
+    			add_location(p4, file, 33, 1, 1186);
+    			attr_dev(canvas_1, "class", "svelte-x56pa0");
+    			add_location(canvas_1, file, 34, 1, 1227);
+    			attr_dev(main, "class", "svelte-x56pa0");
+    			add_location(main, file, 25, 0, 882);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16807,20 +16843,30 @@ var app = (function () {
     			append_dev(main, p0);
     			append_dev(main, t7);
     			append_dev(main, p1);
-    			append_dev(main, t9);
+    			append_dev(main, t17);
     			append_dev(main, img);
-    			append_dev(main, t10);
+    			append_dev(main, t18);
+    			append_dev(main, p2);
+    			append_dev(main, t26);
+    			append_dev(main, p3);
+    			append_dev(main, t30);
+    			append_dev(main, p4);
+    			append_dev(p4, t31);
+    			append_dev(p4, t32);
+    			append_dev(p4, t33);
+    			append_dev(main, t34);
     			append_dev(main, canvas_1);
-    			/*canvas_1_binding*/ ctx[5](canvas_1);
+    			/*canvas_1_binding*/ ctx[7](canvas_1);
     		},
     		p: function update(ctx, [dirty]) {
     			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
+    			if (dirty & /*idatal*/ 2) set_data_dev(t33, /*idatal*/ ctx[1]);
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
-    			/*canvas_1_binding*/ ctx[5](null);
+    			/*canvas_1_binding*/ ctx[7](null);
     		}
     	};
 
@@ -16841,27 +16887,25 @@ var app = (function () {
     	let two = addTwoNums(11, 22);
     	let { name } = $$props;
     	let src = 'images/narrow.png';
-    	let map2 = getarray();
+    	let gridsize = 101;
+    	let map2 = getflatarray(gridsize);
+    	let idatal = 0;
     	let canvas;
 
     	onMount(() => {
+    		const bwidth = 10;
     		const ctx = canvas.getContext('2d');
-    		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
+    		$$invalidate(1, idatal = imageData.data.length);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
-    			const i = p / 4;
-    			i % canvas.width;
-    			i / canvas.width >>> 0;
-    			const r = 100;
-    			const g = 100;
-    			const b = 100;
-    			imageData.data[p + 0] = r;
-    			imageData.data[p + 1] = g;
-    			imageData.data[p + 2] = b;
+    			imageData.data[p + 0] = colormap[map2[p / 4]][1];
+    			imageData.data[p + 1] = colormap[map2[p / 4]][2];
+    			imageData.data[p + 2] = colormap[map2[p / 4]][3];
     			imageData.data[p + 3] = 255;
     		}
 
-    		ctx.putImageData(imageData, 0, 0);
+    		ctx.putImageData(imageData, bwidth, bwidth);
     	});
 
     	const writable_props = ['name'];
@@ -16873,7 +16917,7 @@ var app = (function () {
     	function canvas_1_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			canvas = $$value;
-    			$$invalidate(1, canvas);
+    			$$invalidate(2, canvas);
     		});
     	}
 
@@ -16884,29 +16928,34 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		addTwoNums,
     		getarray,
+    		getflatarray,
     		testmap,
     		colormap,
     		two,
     		name,
     		src,
+    		gridsize,
     		map2,
+    		idatal,
     		onMount,
     		canvas
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('two' in $$props) $$invalidate(2, two = $$props.two);
+    		if ('two' in $$props) $$invalidate(3, two = $$props.two);
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('src' in $$props) $$invalidate(3, src = $$props.src);
-    		if ('map2' in $$props) $$invalidate(4, map2 = $$props.map2);
-    		if ('canvas' in $$props) $$invalidate(1, canvas = $$props.canvas);
+    		if ('src' in $$props) $$invalidate(4, src = $$props.src);
+    		if ('gridsize' in $$props) $$invalidate(5, gridsize = $$props.gridsize);
+    		if ('map2' in $$props) $$invalidate(6, map2 = $$props.map2);
+    		if ('idatal' in $$props) $$invalidate(1, idatal = $$props.idatal);
+    		if ('canvas' in $$props) $$invalidate(2, canvas = $$props.canvas);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [name, canvas, two, src, map2, canvas_1_binding];
+    	return [name, idatal, canvas, two, src, gridsize, map2, canvas_1_binding];
     }
 
     class App extends SvelteComponentDev {

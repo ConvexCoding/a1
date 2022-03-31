@@ -1,40 +1,44 @@
 <script lang="ts">
-	import  {addTwoNums, getarray} from './somefuncs'
+	import  {addTwoNums, getarray, getflatarray} from './somefuncs'
 	import {testmap, colormap} from './lib/colormap'
 	let two = addTwoNums(11, 22);
 	export let name: string;
 	let src = 'images/narrow.png'
-	let map2 = getarray();
+	let gridsize = 101;
+	let map2 = getflatarray(gridsize);
+	let idatal = 0;
 
 	import { onMount } from 'svelte';
+
 	let canvas;
 	onMount(() => {
+		const bwidth = 10;
 		const ctx = canvas.getContext('2d');
-		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
+		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
+		idatal = imageData.data.length;
 		for (let p = 0; p < imageData.data.length; p += 4) {
-			const r = 100;
-			const g = 100;
-			const b = 100;
 
-			imageData.data[p + 0] = r;
-			imageData.data[p + 1] = g;
-			imageData.data[p + 2] = b;
+			imageData.data[p + 0] = colormap[map2[p/4]][1];
+			imageData.data[p + 1] = colormap[map2[p/4]][2];
+			imageData.data[p + 2] = colormap[map2[p/4]][3];
 			imageData.data[p + 3] = 255;
 		}
 
-		ctx.putImageData(imageData, 0, 0);
-
+		ctx.putImageData(imageData, bwidth, bwidth);
 	});
+
 </script>
 
 <main>
 	<h1>Hello - {name}!</h1>
 	<p>Add two numbers produces {two} as sum of 11 plus 22.</p>
-	<p>{map2[5]}</p>
-	<img {src} alt=''/>	
-	<canvas	bind:this={canvas} width={101} height={20} ></canvas>
+	<p>{map2[5]} {"  *****  "} {colormap[2]} {" ** "} {colormap[2][3]}</p>
 
+	<img {src} alt=''/>	
+	<p>{"map2 Dimensions: "} {gridsize} {" by "} {gridsize}</p>
+	<p>{"map2.flattend Dimensions: "} {map2.length}</p>
+	<p>{"image data length: "} {idatal}</p>
+	<canvas	bind:this={canvas} ></canvas>
 </main>
 
 <style>
@@ -52,24 +56,24 @@
 		font-weight: 100;
 	}
 
-	@media (min-width: 300px) {
+	@media (min-width: 400px) {
 		main {
 			max-width: none;
 		}
 	}
 
 	img {
-		width: 201;
-		height: 101;
+		width: auto;
+		height: auto;
 		background-color: coral;
 		color: #ff3e00;
 	}
 
 	canvas {
-		width: 100%;
-
-		background-color: #666;
-		border-color: 5px black;
+		width: 100%;;
+		height: 100%;		
+		background-color: yellow;
+		border: 2px solid #000000;
 	}
 
 
