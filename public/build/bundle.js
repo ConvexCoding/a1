@@ -72,6 +72,14 @@ var app = (function () {
     function set_current_component(component) {
         current_component = component;
     }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
 
     const dirty_components = [];
     const binding_callbacks = [];
@@ -16751,32 +16759,40 @@ var app = (function () {
     	let t9;
     	let img;
     	let img_src_value;
+    	let t10;
+    	let canvas_1;
 
     	const block = {
     		c: function create() {
     			main = element("main");
     			h1 = element("h1");
-    			t0 = text("Hello ");
+    			t0 = text("Hello - ");
     			t1 = text(/*name*/ ctx[0]);
     			t2 = text("!");
     			t3 = space();
     			p0 = element("p");
-    			p0.textContent = `Add two numbers produces ${/*two*/ ctx[1]} as sum of 11 plus 22.`;
+    			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = `${/*map2*/ ctx[3][5]}`;
+    			p1.textContent = `${/*map2*/ ctx[4][5]}`;
     			t9 = space();
     			img = element("img");
-    			attr_dev(h1, "class", "svelte-g5oqbn");
-    			add_location(h1, file, 9, 1, 246);
-    			add_location(p0, file, 10, 1, 270);
-    			add_location(p1, file, 11, 1, 331);
-    			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[2])) attr_dev(img, "src", img_src_value);
+    			t10 = space();
+    			canvas_1 = element("canvas");
+    			attr_dev(h1, "class", "svelte-1657ms0");
+    			add_location(h1, file, 28, 1, 865);
+    			add_location(p0, file, 29, 1, 891);
+    			add_location(p1, file, 30, 1, 952);
+    			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[3])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
-    			attr_dev(img, "class", "svelte-g5oqbn");
-    			add_location(img, file, 12, 1, 349);
-    			attr_dev(main, "class", "svelte-g5oqbn");
-    			add_location(main, file, 8, 0, 238);
+    			attr_dev(img, "class", "svelte-1657ms0");
+    			add_location(img, file, 31, 1, 970);
+    			attr_dev(canvas_1, "width", 101);
+    			attr_dev(canvas_1, "height", 20);
+    			attr_dev(canvas_1, "class", "svelte-1657ms0");
+    			add_location(canvas_1, file, 32, 1, 992);
+    			attr_dev(main, "class", "svelte-1657ms0");
+    			add_location(main, file, 27, 0, 857);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16793,6 +16809,9 @@ var app = (function () {
     			append_dev(main, p1);
     			append_dev(main, t9);
     			append_dev(main, img);
+    			append_dev(main, t10);
+    			append_dev(main, canvas_1);
+    			/*canvas_1_binding*/ ctx[5](canvas_1);
     		},
     		p: function update(ctx, [dirty]) {
     			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
@@ -16801,6 +16820,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
+    			/*canvas_1_binding*/ ctx[5](null);
     		}
     	};
 
@@ -16820,13 +16840,42 @@ var app = (function () {
     	validate_slots('App', slots, []);
     	let two = addTwoNums(11, 22);
     	let { name } = $$props;
-    	let src = 'images/test.png';
+    	let src = 'images/narrow.png';
     	let map2 = getarray();
+    	let canvas;
+
+    	onMount(() => {
+    		const ctx = canvas.getContext('2d');
+    		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    		for (let p = 0; p < imageData.data.length; p += 4) {
+    			const i = p / 4;
+    			i % canvas.width;
+    			i / canvas.width >>> 0;
+    			const r = 100;
+    			const g = 100;
+    			const b = 100;
+    			imageData.data[p + 0] = r;
+    			imageData.data[p + 1] = g;
+    			imageData.data[p + 2] = b;
+    			imageData.data[p + 3] = 255;
+    		}
+
+    		ctx.putImageData(imageData, 0, 0);
+    	});
+
     	const writable_props = ['name'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
     	});
+
+    	function canvas_1_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			canvas = $$value;
+    			$$invalidate(1, canvas);
+    		});
+    	}
 
     	$$self.$$set = $$props => {
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
@@ -16840,21 +16889,24 @@ var app = (function () {
     		two,
     		name,
     		src,
-    		map2
+    		map2,
+    		onMount,
+    		canvas
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('two' in $$props) $$invalidate(1, two = $$props.two);
+    		if ('two' in $$props) $$invalidate(2, two = $$props.two);
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('src' in $$props) $$invalidate(2, src = $$props.src);
-    		if ('map2' in $$props) $$invalidate(3, map2 = $$props.map2);
+    		if ('src' in $$props) $$invalidate(3, src = $$props.src);
+    		if ('map2' in $$props) $$invalidate(4, map2 = $$props.map2);
+    		if ('canvas' in $$props) $$invalidate(1, canvas = $$props.canvas);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [name, two, src, map2];
+    	return [name, canvas, two, src, map2, canvas_1_binding];
     }
 
     class App extends SvelteComponentDev {
@@ -16889,7 +16941,7 @@ var app = (function () {
     const app = new App({
         target: document.body,
         props: {
-            name: 'world'
+            name: 'is it Working?'
         }
     });
 
