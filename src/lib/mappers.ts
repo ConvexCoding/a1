@@ -69,4 +69,65 @@ export function GenWfeMapBits(lens: Lens, refocus: number, halfCa: number, grids
     console.log("Mapper WFE RMS: " + varirms);
     return wfemap
 }
+// this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
+// this will only be useful I guess until the GPU calculators get going???
+export function GenFlatWfeMapBits(lens: Lens, refocus: number, halfCa: number, gridsize: number): number[] {
+
+    var wfemap: number[] = new Array();
+    let inc = 2.0 * halfCa / (gridsize - 1)
+    const diag = halfCa * halfCa * 1.0001    // add a little extra to make sure and get the cardinal points
+
+    let min = 1e20;
+    let max = -1e20;
+    let ctx = 0;
+    let sum = 0;
+    let sumsum = 0;
+
+    for (let row = 0; row < gridsize; row++) 
+    {
+       for (let col = 0; col < gridsize; col++) 
+        {
+            let x = -halfCa + row * inc
+            let y = -halfCa + col * inc
+            if (diag > (x * x + y * y))
+            {
+                let p = new Vector3D(x, y, 0.0)
+                let wfe= calcWfeVecs(p, zeroDir, lens, refocus)
+                if (wfe < min)
+                {
+                    min = wfe;
+                }
+                if (wfe > max)
+                {
+                    max = wfe;
+                }
+                sum += wfe;
+                sumsum += wfe * wfe;
+                ctx += 1;
+                wfemap.push(wfe);
+            }
+            else
+            wfemap.push(NaN);
+        }
+    }
+    
+    let varirms = sqrt((sumsum - sum * sum / ctx) / (ctx - 1.0));
+
+    let diff = max - min;
+    
+    // put into array
+    for (let i = 0; i < gridsize * gridsize; i++) 
+    {
+        if (!isNaN(wfemap[i])) {
+            wfemap[i]  = round(122.0 * (wfemap[i] - min) / diff);
+        }
+        else {
+            wfemap[i]  = 123;
+        }
+    }
+
+    
+    console.log("Mapper WFE RMS: " + varirms);
+    return wfemap
+}
 

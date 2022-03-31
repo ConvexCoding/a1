@@ -16049,6 +16049,53 @@ var app = (function () {
         console.log("Mapper WFE RMS: " + varirms);
         return wfemap;
     }
+    // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
+    // this will only be useful I guess until the GPU calculators get going???
+    function GenFlatWfeMapBits(lens, refocus, halfCa, gridsize) {
+        var wfemap = new Array();
+        let inc = 2.0 * halfCa / (gridsize - 1);
+        const diag = halfCa * halfCa * 1.0001; // add a little extra to make sure and get the cardinal points
+        let min = 1e20;
+        let max = -1e20;
+        let ctx = 0;
+        let sum = 0;
+        let sumsum = 0;
+        for (let row = 0; row < gridsize; row++) {
+            for (let col = 0; col < gridsize; col++) {
+                let x = -halfCa + row * inc;
+                let y = -halfCa + col * inc;
+                if (diag > (x * x + y * y)) {
+                    let p = new Vector3D(x, y, 0.0);
+                    let wfe = calcWfeVecs(p, zeroDir, lens, refocus);
+                    if (wfe < min) {
+                        min = wfe;
+                    }
+                    if (wfe > max) {
+                        max = wfe;
+                    }
+                    sum += wfe;
+                    sumsum += wfe * wfe;
+                    ctx += 1;
+                    wfemap.push(wfe);
+                }
+                else
+                    wfemap.push(NaN);
+            }
+        }
+        let varirms = sqrt((sumsum - sum * sum / ctx) / (ctx - 1.0));
+        let diff = max - min;
+        // put into array
+        for (let i = 0; i < gridsize * gridsize; i++) {
+            if (!isNaN(wfemap[i])) {
+                wfemap[i] = round(122.0 * (wfemap[i] - min) / diff);
+            }
+            else {
+                wfemap[i] = 123;
+            }
+        }
+        console.log("Mapper WFE RMS: " + varirms);
+        return wfemap;
+    }
 
     var MaterialType;
     (function (MaterialType) {
@@ -16611,14 +16658,8 @@ var app = (function () {
         let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
         let mat = Material.fromString("FusedSilica");
         let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
-        let newmap = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
-        var wfemap = new Array();
-        for (let row = 0; row < gridsize; row++) {
-            for (let col = 0; col < gridsize; col++) {
-                wfemap.push(newmap[row][col]);
-            }
-        }
-        return wfemap;
+        let newmap = GenFlatWfeMapBits(lens, -0.711, 10.0, gridsize);
+        return newmap;
     }
 
     let testmap = [[123, 123, 123, 123, 123, 122, 123, 123, 123, 123, 123],
@@ -16632,130 +16673,130 @@ var app = (function () {
         [123, 122, 62, 32, 19, 15, 19, 32, 62, 122, 123],
         [123, 123, 122, 77, 56, 49, 56, 77, 122, 123, 123],
         [123, 123, 123, 123, 123, 122, 123, 123, 123, 123, 123]];
-    let colormap = [[255, 40, 0, 60],
-        [255, 50, 0, 70],
-        [255, 60, 0, 80],
-        [255, 70, 0, 85],
-        [255, 80, 0, 90],
-        [255, 95, 0, 100],
-        [255, 105, 0, 110],
-        [255, 115, 0, 115],
-        [255, 125, 0, 115],
-        [255, 140, 0, 115],
-        [255, 155, 0, 115],
-        [255, 170, 0, 115],
-        [255, 185, 0, 115],
-        [255, 200, 0, 125],
-        [255, 210, 0, 135],
-        [255, 220, 0, 150],
-        [255, 220, 0, 180],
-        [255, 205, 0, 200],
-        [255, 205, 0, 230],
-        [255, 190, 0, 255],
-        [255, 170, 0, 255],
-        [255, 150, 0, 255],
-        [255, 130, 0, 255],
-        [255, 110, 0, 255],
-        [255, 80, 0, 255],
-        [255, 40, 0, 255],
-        [255, 0, 0, 255],
-        [255, 0, 0, 245],
-        [255, 0, 0, 235],
-        [255, 0, 0, 225],
-        [255, 0, 0, 215],
-        [255, 0, 0, 205],
-        [255, 0, 35, 205],
-        [255, 0, 50, 205],
-        [255, 0, 65, 205],
-        [255, 0, 80, 205],
-        [255, 0, 95, 205],
-        [255, 0, 105, 210],
-        [255, 0, 115, 220],
-        [255, 0, 125, 225],
-        [255, 0, 125, 235],
-        [255, 0, 135, 240],
-        [255, 0, 145, 250],
-        [255, 0, 155, 255],
-        [255, 0, 170, 255],
-        [255, 0, 185, 255],
-        [255, 0, 195, 255],
-        [255, 0, 210, 255],
-        [255, 0, 230, 255],
-        [255, 0, 245, 255],
-        [255, 0, 255, 235],
-        [255, 0, 255, 220],
-        [255, 0, 255, 180],
-        [255, 0, 255, 140],
-        [255, 0, 255, 80],
-        [255, 0, 255, 0],
-        [255, 0, 240, 0],
-        [255, 0, 235, 0],
-        [255, 0, 230, 0],
-        [255, 0, 225, 0],
-        [255, 0, 220, 0],
-        [255, 0, 215, 0],
-        [255, 0, 210, 0],
-        [255, 0, 205, 0],
-        [255, 0, 200, 0],
-        [255, 0, 195, 0],
-        [255, 0, 190, 0],
-        [255, 30, 195, 0],
-        [255, 35, 200, 0],
-        [255, 40, 205, 0],
-        [255, 50, 210, 0],
-        [255, 70, 215, 0],
-        [255, 90, 220, 0],
-        [255, 118, 225, 0],
-        [255, 137, 230, 0],
-        [255, 156, 234, 0],
-        [255, 174, 238, 0],
-        [255, 191, 241, 0],
-        [255, 207, 245, 0],
-        [255, 221, 248, 0],
-        [255, 233, 250, 0],
-        [255, 242, 252, 0],
-        [255, 249, 254, 0],
-        [255, 254, 254, 0],
-        [255, 255, 252, 0],
-        [255, 255, 249, 0],
-        [255, 255, 244, 0],
-        [255, 255, 238, 0],
-        [255, 255, 231, 0],
-        [255, 255, 223, 0],
-        [255, 255, 215, 0],
-        [255, 255, 206, 0],
-        [255, 255, 196, 0],
-        [255, 255, 187, 0],
-        [255, 255, 177, 0],
-        [255, 255, 168, 0],
-        [255, 255, 160, 0],
-        [255, 255, 152, 0],
-        [255, 255, 145, 0],
-        [255, 255, 139, 0],
-        [255, 255, 134, 0],
-        [255, 255, 131, 0],
-        [255, 255, 128, 0],
-        [255, 255, 127, 0],
-        [255, 255, 125, 0],
-        [255, 255, 122, 0],
-        [255, 255, 117, 0],
-        [255, 255, 111, 0],
-        [255, 255, 104, 0],
-        [255, 255, 96, 0],
-        [255, 255, 87, 0],
-        [255, 255, 78, 0],
-        [255, 255, 69, 0],
-        [255, 255, 59, 0],
-        [255, 255, 50, 0],
-        [255, 255, 41, 0],
-        [255, 255, 32, 0],
-        [255, 255, 24, 0],
-        [255, 255, 17, 0],
-        [255, 255, 11, 0],
-        [255, 255, 6, 0],
-        [255, 255, 3, 0],
-        [255, 255, 0, 0],
-        [255, 255, 255, 255]];
+    let colormap = [[40, 0, 60],
+        [50, 0, 70],
+        [60, 0, 80],
+        [70, 0, 85],
+        [80, 0, 90],
+        [95, 0, 100],
+        [105, 0, 110],
+        [115, 0, 115],
+        [125, 0, 115],
+        [140, 0, 115],
+        [155, 0, 115],
+        [170, 0, 115],
+        [185, 0, 115],
+        [200, 0, 125],
+        [210, 0, 135],
+        [220, 0, 150],
+        [220, 0, 180],
+        [205, 0, 200],
+        [205, 0, 230],
+        [190, 0, 255],
+        [170, 0, 255],
+        [150, 0, 255],
+        [130, 0, 255],
+        [110, 0, 255],
+        [80, 0, 255],
+        [40, 0, 255],
+        [0, 0, 255],
+        [0, 0, 245],
+        [0, 0, 235],
+        [0, 0, 225],
+        [0, 0, 215],
+        [0, 0, 205],
+        [0, 35, 205],
+        [0, 50, 205],
+        [0, 65, 205],
+        [0, 80, 205],
+        [0, 95, 205],
+        [0, 105, 210],
+        [0, 115, 220],
+        [0, 125, 225],
+        [0, 125, 235],
+        [0, 135, 240],
+        [0, 145, 250],
+        [0, 155, 255],
+        [0, 170, 255],
+        [0, 185, 255],
+        [0, 195, 255],
+        [0, 210, 255],
+        [0, 230, 255],
+        [0, 245, 255],
+        [0, 255, 235],
+        [0, 255, 220],
+        [0, 255, 180],
+        [0, 255, 140],
+        [0, 255, 80],
+        [0, 255, 0],
+        [0, 240, 0],
+        [0, 235, 0],
+        [0, 230, 0],
+        [0, 225, 0],
+        [0, 220, 0],
+        [0, 215, 0],
+        [0, 210, 0],
+        [0, 205, 0],
+        [0, 200, 0],
+        [0, 195, 0],
+        [0, 190, 0],
+        [30, 195, 0],
+        [35, 200, 0],
+        [40, 205, 0],
+        [50, 210, 0],
+        [70, 215, 0],
+        [90, 220, 0],
+        [118, 225, 0],
+        [137, 230, 0],
+        [156, 234, 0],
+        [174, 238, 0],
+        [191, 241, 0],
+        [207, 245, 0],
+        [221, 248, 0],
+        [233, 250, 0],
+        [242, 252, 0],
+        [249, 254, 0],
+        [254, 254, 0],
+        [255, 252, 0],
+        [255, 249, 0],
+        [255, 244, 0],
+        [255, 238, 0],
+        [255, 231, 0],
+        [255, 223, 0],
+        [255, 215, 0],
+        [255, 206, 0],
+        [255, 196, 0],
+        [255, 187, 0],
+        [255, 177, 0],
+        [255, 168, 0],
+        [255, 160, 0],
+        [255, 152, 0],
+        [255, 145, 0],
+        [255, 139, 0],
+        [255, 134, 0],
+        [255, 131, 0],
+        [255, 128, 0],
+        [255, 127, 0],
+        [255, 125, 0],
+        [255, 122, 0],
+        [255, 117, 0],
+        [255, 111, 0],
+        [255, 104, 0],
+        [255, 96, 0],
+        [255, 87, 0],
+        [255, 78, 0],
+        [255, 69, 0],
+        [255, 59, 0],
+        [255, 50, 0],
+        [255, 41, 0],
+        [255, 32, 0],
+        [255, 24, 0],
+        [255, 17, 0],
+        [255, 11, 0],
+        [255, 6, 0],
+        [255, 3, 0],
+        [255, 0, 0],
+        [255, 255, 255]];
 
     /* src\App.svelte generated by Svelte v3.46.4 */
     const file = "src\\App.svelte";
@@ -16814,21 +16855,23 @@ var app = (function () {
     			t33 = text(/*idatal*/ ctx[1]);
     			t34 = space();
     			canvas_1 = element("canvas");
-    			attr_dev(h1, "class", "svelte-x56pa0");
-    			add_location(h1, file, 26, 1, 890);
-    			add_location(p0, file, 27, 1, 916);
-    			add_location(p1, file, 28, 1, 977);
+    			attr_dev(h1, "class", "svelte-1ck14rg");
+    			add_location(h1, file, 26, 1, 889);
+    			add_location(p0, file, 27, 1, 915);
+    			add_location(p1, file, 28, 1, 976);
     			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[4])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
-    			attr_dev(img, "class", "svelte-x56pa0");
-    			add_location(img, file, 30, 1, 1050);
-    			add_location(p2, file, 31, 1, 1072);
-    			add_location(p3, file, 32, 1, 1133);
-    			add_location(p4, file, 33, 1, 1186);
-    			attr_dev(canvas_1, "class", "svelte-x56pa0");
-    			add_location(canvas_1, file, 34, 1, 1227);
-    			attr_dev(main, "class", "svelte-x56pa0");
-    			add_location(main, file, 25, 0, 882);
+    			attr_dev(img, "class", "svelte-1ck14rg");
+    			add_location(img, file, 30, 1, 1049);
+    			add_location(p2, file, 31, 1, 1071);
+    			add_location(p3, file, 32, 1, 1132);
+    			add_location(p4, file, 33, 1, 1185);
+    			attr_dev(canvas_1, "width", "310");
+    			attr_dev(canvas_1, "height", "310");
+    			attr_dev(canvas_1, "class", "svelte-1ck14rg");
+    			add_location(canvas_1, file, 34, 1, 1226);
+    			attr_dev(main, "class", "svelte-1ck14rg");
+    			add_location(main, file, 25, 0, 881);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16887,21 +16930,21 @@ var app = (function () {
     	let two = addTwoNums(11, 22);
     	let { name } = $$props;
     	let src = 'images/narrow.png';
-    	let gridsize = 101;
+    	let gridsize = 301;
     	let map2 = getflatarray(gridsize);
     	let idatal = 0;
     	let canvas;
 
     	onMount(() => {
-    		const bwidth = 10;
+    		const bwidth = 3;
     		const ctx = canvas.getContext('2d');
     		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
     		$$invalidate(1, idatal = imageData.data.length);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
-    			imageData.data[p + 0] = colormap[map2[p / 4]][1];
-    			imageData.data[p + 1] = colormap[map2[p / 4]][2];
-    			imageData.data[p + 2] = colormap[map2[p / 4]][3];
+    			imageData.data[p + 0] = colormap[map2[p / 4]][0];
+    			imageData.data[p + 1] = colormap[map2[p / 4]][1];
+    			imageData.data[p + 2] = colormap[map2[p / 4]][2];
     			imageData.data[p + 3] = 255;
     		}
 

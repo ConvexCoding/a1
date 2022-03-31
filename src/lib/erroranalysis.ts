@@ -104,6 +104,30 @@ export function GenWfeMap(lens: Lens, refocus: number, halfCa: number, gridsize:
     return wfemap
 }
 
+// this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
+// this will only be useful I guess until the GPU calculators get going???
+export function GenFlatWfeMap(lens: Lens, refocus: number, halfCa: number, gridsize: number): number[] {
+
+    var wfemap: number[] = new Array();
+    let inc = 2.0 * halfCa / (gridsize - 1)
+    const diag = halfCa * halfCa * 1.0001    // add a little extra to make sure and get the cardinal points
+    for (let row = 0; row < gridsize; row++) 
+    {
+        for (let col = 0; col < gridsize; col++) 
+        {
+            let x = -halfCa + row * inc
+            let y = -halfCa + col * inc
+            if (diag > (x * x + y * y))
+            {
+                wfemap.push(calcWfeVecs(new Vector3D(x, y, 0.0), zeroDir, lens, refocus))
+            }
+            else
+            wfemap.push( NaN )
+        }
+    }
+    return wfemap
+}
+
 
 export function GenSpotDiagram(lens: Lens, refocus: number, halfCa: number, gridsize: number): Ray[] {
 

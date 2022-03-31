@@ -4,7 +4,7 @@
 	let two = addTwoNums(11, 22);
 	export let name: string;
 	let src = 'images/narrow.png'
-	let gridsize = 101;
+	let gridsize = 301;
 	let map2 = getflatarray(gridsize);
 	let idatal = 0;
 
@@ -12,18 +12,17 @@
 
 	let canvas;
 	onMount(() => {
-		const bwidth = 10;
+		const bwidth = 3;
 		const ctx = canvas.getContext('2d');
 		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
 		idatal = imageData.data.length;
 		for (let p = 0; p < imageData.data.length; p += 4) {
 
-			imageData.data[p + 0] = colormap[map2[p/4]][1];
-			imageData.data[p + 1] = colormap[map2[p/4]][2];
-			imageData.data[p + 2] = colormap[map2[p/4]][3];
+			imageData.data[p + 0] = colormap[map2[p/4]][0];
+			imageData.data[p + 1] = colormap[map2[p/4]][1];
+			imageData.data[p + 2] = colormap[map2[p/4]][2];
 			imageData.data[p + 3] = 255;
 		}
-
 		ctx.putImageData(imageData, bwidth, bwidth);
 	});
 
@@ -38,14 +37,14 @@
 	<p>{"map2 Dimensions: "} {gridsize} {" by "} {gridsize}</p>
 	<p>{"map2.flattend Dimensions: "} {map2.length}</p>
 	<p>{"image data length: "} {idatal}</p>
-	<canvas	bind:this={canvas} ></canvas>
+	<canvas	bind:this={canvas} width='310' height='310'></canvas>
 </main>
 
 <style>
 	main {
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
+		max-width: 310px;
 		margin: 0 auto;
 	}
 
@@ -56,7 +55,7 @@
 		font-weight: 100;
 	}
 
-	@media (min-width: 400px) {
+	@media (min-width: 310px) {
 		main {
 			max-width: none;
 		}
@@ -70,8 +69,8 @@
 	}
 
 	canvas {
-		width: 100%;;
-		height: 100%;		
+		width: 50%;;
+		height: 50%;		
 		background-color: yellow;
 		border: 2px solid #000000;
 	}
