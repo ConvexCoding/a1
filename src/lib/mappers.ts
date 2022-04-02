@@ -1,4 +1,4 @@
-import { round, sqrt } from 'mathjs'
+import { number, round, sqrt } from 'mathjs'
 import type { Lens } from './lens'
 import { Vector3D } from './vector'
 import { calcWfeVecs } from './erroranalysis'
@@ -7,7 +7,7 @@ const zeroDir = new Vector3D(0.0, 0.0, 1.0)
 
 // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
 // this will only be useful I guess until the GPU calculators get going???
-export function GenWfeMapBits(lens: Lens, refocus: number, halfCa: number, gridsize: number): number[][] {
+export function GenWfeMapBits(lens: Lens, refocus: number, halfCa: number, gridsize: number): [number[][], number, number] {
 
     var wfemap: number[][] = new Array();
     let inc = 2.0 * halfCa / (gridsize - 1)
@@ -67,11 +67,11 @@ export function GenWfeMapBits(lens: Lens, refocus: number, halfCa: number, grids
 
     
     console.log("Mapper WFE RMS: " + varirms);
-    return wfemap
+    return [wfemap, min, max]
 }
 // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
 // this will only be useful I guess until the GPU calculators get going???
-export function GenFlatWfeMapBits(lens: Lens, refocus: number, halfCa: number, gridsize: number): number[] {
+export function GenFlatWfeMapBits(lens: Lens, refocus: number, halfCa: number, gridsize: number): [number[], number, number] {
 
     var wfemap: number[] = new Array();
     let inc = 2.0 * halfCa / (gridsize - 1)
@@ -127,7 +127,7 @@ export function GenFlatWfeMapBits(lens: Lens, refocus: number, halfCa: number, g
     }
 
     
-    console.log("Mapper WFE RMS: " + varirms);
-    return wfemap
+    //console.log("Mapper WFE RMS: " + varirms);
+    return [wfemap, min, max]
 }
 

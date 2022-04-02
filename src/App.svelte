@@ -1,12 +1,14 @@
 <script lang="ts">
 	import  {addTwoNums, getarray, getflatarray} from './somefuncs'
-	import {testmap, colormap} from './lib/colormap'
+	import { colormap } from './lib/colormap'
 	let two = addTwoNums(11, 22);
 	export let name: string;
 	let src = 'images/narrow.png'
 	let gridsize = 301;
-	let map2 = getflatarray(gridsize);
+	let [map2, min, max] = getflatarray(gridsize);
 	let idatal = 0;
+	let canvasmapwidth = 450;
+	let canvasmapheight = 310;
 
 	import { onMount } from 'svelte';
 
@@ -15,7 +17,6 @@
 		const bwidth = 3;
 		const ctx = canvas.getContext('2d');
 		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
-		idatal = imageData.data.length;
 		for (let p = 0; p < imageData.data.length; p += 4) {
 
 			imageData.data[p + 0] = colormap[map2[p/4]][0];
@@ -24,6 +25,40 @@
 			imageData.data[p + 3] = 255;
 		}
 		ctx.putImageData(imageData, bwidth, bwidth);
+		
+		let scaleheight = colormap.length - 1;
+		var scalewdith = 40;
+		var colorscale = ctx.getImageData(0, 0, scalewdith, scaleheight);
+
+		for (let row = 0; row < scaleheight; row++) {
+			for (let col = 0; col < scalewdith; col++) {
+				let posi = col * 4 + row * 4 * scalewdith;
+				let cmaposi = colormap.length - row - 1;
+				colorscale.data[posi + 0] = colormap[cmaposi][0];
+				colorscale.data[posi + 1] = colormap[cmaposi][1];
+				colorscale.data[posi + 2] = colormap[cmaposi][2];
+				colorscale.data[posi + 3] = 255;
+				console.log(row, col, posi);
+			}
+		}
+
+		console.log("total gridsize: " + colorscale.data.length)
+		console.log("scale width: " + scalewdith);
+		console.log("scale height: " + scaleheight);
+		let vposi = (canvasmapheight - colormap.length) / 2;
+		ctx.putImageData(colorscale, 340, vposi);
+		
+		//var section2 = ctx.getImageData(200, bwidth, gridsize, gridsize);
+		//ctx.putImageData(imageData, 200, bwidth);
+
+		let textctr = 340 + scalewdith/2;
+		ctx.font = "16px Arial";
+		ctx.textAlign = "center";
+		ctx.fillStyle = "#000";
+		ctx.fillText("WFE P-to-V: ", textctr, vposi - 40);
+		ctx.font = "12px Arial";
+		ctx.fillText("Max: " + max.toFixed(3), textctr, vposi - 5);
+		ctx.fillText("Min: " + min.toFixed(3), textctr, vposi + colormap.length + 15);
 	});
 
 </script>
@@ -37,7 +72,7 @@
 	<p>{"map2 Dimensions: "} {gridsize} {" by "} {gridsize}</p>
 	<p>{"map2.flattend Dimensions: "} {map2.length}</p>
 	<p>{"image data length: "} {idatal}</p>
-	<canvas	bind:this={canvas} width='310' height='310'></canvas>
+	<canvas	bind:this={canvas} width='450' height='310'></canvas>
 </main>
 
 <style>
@@ -51,7 +86,7 @@
 	h1 {
 		color: #ff3e00;
 		text-transform: uppercase;
-		font-size: 4em;
+		font-size: 3em;
 		font-weight: 100;
 	}
 
@@ -71,7 +106,7 @@
 	canvas {
 		width: 50%;;
 		height: 50%;		
-		background-color: yellow;
+		background-color: white;
 		border: 2px solid #000000;
 	}
 

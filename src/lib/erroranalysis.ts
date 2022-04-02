@@ -87,7 +87,7 @@ export function GenWfeMap(lens: Lens, refocus: number, halfCa: number, gridsize:
     const diag = halfCa * halfCa * 1.0001    // add a little extra to make sure and get the cardinal points
     for (let row = 0; row < gridsize; row++) 
     {
-        wfemap[row] = new Array()
+        wfemap[row] = new Array(gridsize - 1 - row);
         for (let col = 0; col < gridsize; col++) 
         {
             let x = -halfCa + row * inc

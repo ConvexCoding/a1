@@ -12,19 +12,19 @@ export function getarray(gridsize: number ): number[][] {
     let mat = Material.fromString("FusedSilica");
     let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
 
-    let newmap = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
+    let [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
 
     return newmap;
 }
 
-export function getflatarray(gridsize: number ): number[] {
+export function getflatarray(gridsize: number ): [number[], number, number] {
     
     let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
     let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
     let mat = Material.fromString("FusedSilica");
     let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
 
-    let newmap = GenFlatWfeMapBits(lens, -0.711, 10.0, gridsize);
+    let [newmap, min, max] = GenFlatWfeMapBits(lens, -0.58, 10.0, gridsize);
 
-    return newmap;
+    return [newmap, min, max];
 }
