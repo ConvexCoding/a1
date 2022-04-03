@@ -135,7 +135,7 @@ export default class Material {
   toString() {
     return MaterialType[this.type]
   }
-/*
+  /*
   static get allMaterials() {
     return Object.values(MaterialType)
       .filter((n) => typeof n === 'string')

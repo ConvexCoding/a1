@@ -15965,7 +15965,7 @@ var app = (function () {
 
     const zeroDir$1 = new Vector3D(0.0, 0.0, 1.0);
     // *************************************************************************
-    // all functions below would normally not be exported, but they now are so  
+    // all functions below would normally not be exported, but they now are so
     // that the test1.ts main program can debug or vet their results.
     // *************************************************************************
     function calcWfeVecs(p0, e0, lens, refocus) {
@@ -15980,18 +15980,21 @@ var app = (function () {
         let a = (4.0 * lstatz.lsa - lstatm.lsa) / rsq;
         let b = (2.0 * lstatm.lsa - 4.0 * lstatz.lsa) / rsqsq;
         /*
-        console.log("")
-        console.log("p0: " + p0.toString2(3))
-        console.log("e0: " + e0.toString2(3));
-        console.log("p1: " + p1.toString2(3))
-        console.log("rm.v: " + lstatm.rayout.pVector.toString2(6))
-        console.log("rz.v: " + lstatz.rayout.pVector.toString2(6))
-        console.log("lstatm: " + LsaResToStr(lstatm, 6))
-        console.log("lstatz: " + LsaResToStr(lstatz, 6))
-        console.log("a: " + a.toFixed(8))
-        console.log("b: " + b.toFixed(8))
-        */
-        return (1000.0 * (sin(lstatm.aoi) * sin(lstatm.aoi) / 2.0) * (refocus - a * rsq / 2.0 - b * rsqsq / 3.0) / lens.wavelength);
+          console.log("")
+          console.log("p0: " + p0.toString2(3))
+          console.log("e0: " + e0.toString2(3));
+          console.log("p1: " + p1.toString2(3))
+          console.log("rm.v: " + lstatm.rayout.pVector.toString2(6))
+          console.log("rz.v: " + lstatz.rayout.pVector.toString2(6))
+          console.log("lstatm: " + LsaResToStr(lstatm, 6))
+          console.log("lstatz: " + LsaResToStr(lstatz, 6))
+          console.log("a: " + a.toFixed(8))
+          console.log("b: " + b.toFixed(8))
+          */
+        return ((1000.0 *
+            ((sin(lstatm.aoi) * sin(lstatm.aoi)) / 2.0) *
+            (refocus - (a * rsq) / 2.0 - (b * rsqsq) / 3.0)) /
+            lens.wavelength);
     }
     function CalcLSAVecs(p0, e0, lens, refocus) {
         // taken from rust implementation
@@ -16000,7 +16003,8 @@ var app = (function () {
         //(aoi, lsa)
         let rayout = trace3DRay(p0, e0, lens, refocus);
         let aoi = acos(Vector3D.dotProduct(rayout.eDir, zeroDir$1));
-        let lsa = -1.0 * sqrt(rayout.pVector.x * rayout.pVector.x + rayout.pVector.y * rayout.pVector.y) / tan(aoi);
+        let lsa = (-1.0 * sqrt(rayout.pVector.x * rayout.pVector.x + rayout.pVector.y * rayout.pVector.y)) /
+            tan(aoi);
         let lsares = { rayout: rayout, lsa: lsa, aoi: aoi };
         return lsares; // calls to this function expect radians
     }
@@ -16010,7 +16014,7 @@ var app = (function () {
     // this will only be useful I guess until the GPU calculators get going???
     function GenWfeMapBits(lens, refocus, halfCa, gridsize) {
         var wfemap = new Array();
-        let inc = 2.0 * halfCa / (gridsize - 1);
+        let inc = (2.0 * halfCa) / (gridsize - 1);
         const diag = halfCa * halfCa * 1.0001; // add a little extra to make sure and get the cardinal points
         let min = 1e20;
         let max = -1e20;
@@ -16022,7 +16026,7 @@ var app = (function () {
             for (let col = 0; col < gridsize; col++) {
                 let x = -halfCa + row * inc;
                 let y = -halfCa + col * inc;
-                if (diag > (x * x + y * y)) {
+                if (diag > x * x + y * y) {
                     let p = new Vector3D(x, y, 0.0);
                     wfemap[row][col] = calcWfeVecs(p, zeroDir, lens, refocus);
                     if (wfemap[row][col] < min) {
@@ -16039,27 +16043,27 @@ var app = (function () {
                     wfemap[row][col] = NaN;
             }
         }
-        let varirms = sqrt((sumsum - sum * sum / ctx) / (ctx - 1.0));
+        let varirms = sqrt((sumsum - (sum * sum) / ctx) / (ctx - 1.0));
         let diff = max - min;
         // put into array
         for (let row = 0; row < gridsize; row++) {
             for (let col = 0; col < gridsize; col++) {
                 if (!isNaN(wfemap[row][col])) {
-                    wfemap[row][col] = round(122.0 * (wfemap[row][col] - min) / diff);
+                    wfemap[row][col] = round((122.0 * (wfemap[row][col] - min)) / diff);
                 }
                 else {
                     wfemap[row][col] = 123;
                 }
             }
         }
-        console.log("Mapper WFE RMS: " + varirms);
+        console.log('Mapper WFE RMS: ' + varirms);
         return [wfemap, min, max];
     }
     // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
     // this will only be useful I guess until the GPU calculators get going???
     function GenFlatWfeMapBits(lens, refocus, halfCa, gridsize) {
         var wfemap = new Array();
-        let inc = 2.0 * halfCa / (gridsize - 1);
+        let inc = (2.0 * halfCa) / (gridsize - 1);
         const diag = halfCa * halfCa * 1.0001; // add a little extra to make sure and get the cardinal points
         let min = 1e20;
         let max = -1e20;
@@ -16070,7 +16074,7 @@ var app = (function () {
             for (let col = 0; col < gridsize; col++) {
                 let x = -halfCa + row * inc;
                 let y = -halfCa + col * inc;
-                if (diag > (x * x + y * y)) {
+                if (diag > x * x + y * y) {
                     let p = new Vector3D(x, y, 0.0);
                     let wfe = calcWfeVecs(p, zeroDir, lens, refocus);
                     if (wfe < min) {
@@ -16088,12 +16092,12 @@ var app = (function () {
                     wfemap.push(NaN);
             }
         }
-        sqrt((sumsum - sum * sum / ctx) / (ctx - 1.0));
+        sqrt((sumsum - (sum * sum) / ctx) / (ctx - 1.0));
         let diff = max - min;
         // put into array
         for (let i = 0; i < gridsize * gridsize; i++) {
             if (!isNaN(wfemap[i])) {
-                wfemap[i] = round(122.0 * (wfemap[i] - min) / diff);
+                wfemap[i] = round((122.0 * (wfemap[i] - min)) / diff);
             }
             else {
                 wfemap[i] = 123;
@@ -16216,12 +16220,12 @@ var app = (function () {
             return MaterialType[this.type];
         }
         /*
-          static get allMaterials() {
-            return Object.values(MaterialType)
-              .filter((n) => typeof n === 'string')
-              .sort() as string[]
-          }
-        */
+        static get allMaterials() {
+          return Object.values(MaterialType)
+            .filter((n) => typeof n === 'string')
+            .sort() as string[]
+        }
+      */
         static get ZnSe() {
             return new Material(MaterialType.ZnSe, 0.5, 22, 'II-VI Researched', [4.3809835, 0.19656967, 0.5445451, 0.3854439, 2.889225, 47.0210925], sell1);
         }
@@ -16654,7 +16658,7 @@ var app = (function () {
     function getarray(gridsize) {
         let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
-        let mat = Material.fromString("FusedSilica");
+        let mat = Material.fromString('FusedSilica');
         let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
         let [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
         return newmap;
@@ -16662,13 +16666,14 @@ var app = (function () {
     function getflatarray(gridsize) {
         let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
-        let mat = Material.fromString("FusedSilica");
+        let mat = Material.fromString('FusedSilica');
         let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
         let [newmap, min, max] = GenFlatWfeMapBits(lens, -0.58, 10.0, gridsize);
         return [newmap, min, max];
     }
 
-    let colormap = [[40, 0, 60],
+    let colormap = [
+        [40, 0, 60],
         [50, 0, 70],
         [60, 0, 80],
         [70, 0, 85],
@@ -16791,12 +16796,13 @@ var app = (function () {
         [255, 6, 0],
         [255, 3, 0],
         [255, 0, 0],
-        [255, 255, 255]];
+        [255, 255, 255],
+    ];
 
-    /* src\App.svelte generated by Svelte v3.46.4 */
+    /* src/App.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1 } = globals;
-    const file = "src\\App.svelte";
+    const file = "src/App.svelte";
 
     function create_fragment(ctx) {
     	let main;
@@ -16846,23 +16852,23 @@ var app = (function () {
     			p4.textContent = `${"image data length: "}  ${/*idatal*/ ctx[6]}`;
     			t34 = space();
     			canvas_1 = element("canvas");
-    			attr_dev(h1, "class", "svelte-9o07v2");
-    			add_location(h1, file, 56, 1, 2315);
-    			add_location(p0, file, 57, 1, 2341);
-    			add_location(p1, file, 58, 1, 2402);
+    			attr_dev(h1, "class", "svelte-hwvtry");
+    			add_location(h1, file, 56, 2, 2263);
+    			add_location(p0, file, 57, 2, 2290);
+    			add_location(p1, file, 58, 2, 2352);
     			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[3])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
-    			attr_dev(img, "class", "svelte-9o07v2");
-    			add_location(img, file, 60, 1, 2475);
-    			add_location(p2, file, 61, 1, 2497);
-    			add_location(p3, file, 62, 1, 2558);
-    			add_location(p4, file, 63, 1, 2611);
+    			attr_dev(img, "class", "svelte-hwvtry");
+    			add_location(img, file, 60, 2, 2426);
+    			add_location(p2, file, 61, 2, 2449);
+    			add_location(p3, file, 62, 2, 2511);
+    			add_location(p4, file, 63, 2, 2565);
     			attr_dev(canvas_1, "width", "450");
     			attr_dev(canvas_1, "height", "310");
-    			attr_dev(canvas_1, "class", "svelte-9o07v2");
-    			add_location(canvas_1, file, 64, 1, 2652);
-    			attr_dev(main, "class", "svelte-9o07v2");
-    			add_location(main, file, 55, 0, 2307);
+    			attr_dev(canvas_1, "class", "svelte-hwvtry");
+    			add_location(canvas_1, file, 64, 2, 2607);
+    			attr_dev(main, "class", "svelte-hwvtry");
+    			add_location(main, file, 55, 0, 2254);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16916,7 +16922,7 @@ var app = (function () {
     	validate_slots('App', slots, []);
     	let two = addTwoNums(11, 22);
     	let { name } = $$props;
-    	let src = 'images/narrow.png';
+    	let src = "images/narrow.png";
     	let gridsize = 301;
     	let [map2, min, max] = getflatarray(gridsize);
     	let idatal = 0;
@@ -16926,7 +16932,7 @@ var app = (function () {
 
     	onMount(() => {
     		const bwidth = 3;
-    		const ctx = canvas.getContext('2d');
+    		const ctx = canvas.getContext("2d");
     		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
@@ -17061,8 +17067,8 @@ var app = (function () {
     const app = new App({
         target: document.body,
         props: {
-            name: 'is it Working?'
-        }
+            name: 'is it Working?',
+        },
     });
 
     return app;
