@@ -6,7 +6,7 @@ export function addTwoNums(n1: number, n2: number): number {
   return n1 + n2
 }
 
-export function getarray(gridsize: number): number[][] {
+export function getArray(gridsize: number): number[][] {
   const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0)
   const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0)
   const mat = Material.fromString('FusedSilica')
@@ -17,7 +17,7 @@ export function getarray(gridsize: number): number[][] {
   return newmap
 }
 
-export function getflatarray(gridsize: number): [number[], number, number] {
+export function getFlatArray(gridsize: number): [number[], number, number] {
   const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0)
   const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0)
   const mat = Material.fromString('FusedSilica')

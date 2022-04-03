@@ -16655,7 +16655,7 @@ var app = (function () {
     function addTwoNums(n1, n2) {
         return n1 + n2;
     }
-    function getarray(gridsize) {
+    function getArray(gridsize) {
         const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
         const mat = Material.fromString('FusedSilica');
@@ -16663,7 +16663,7 @@ var app = (function () {
         const [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
         return newmap;
     }
-    function getflatarray(gridsize) {
+    function getFlatArray(gridsize) {
         const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
         const mat = Material.fromString('FusedSilica');
@@ -16672,7 +16672,7 @@ var app = (function () {
         return [newmap, min, max];
     }
 
-    const colormap = [
+    const colorMap = [
         [40, 0, 60],
         [50, 0, 70],
         [60, 0, 80],
@@ -16838,12 +16838,12 @@ var app = (function () {
     			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = `${/*map2*/ ctx[3][5]}  ${'  *****  '}  ${colormap[2]}  ${' ** '}  ${colormap[2][3]}`;
+    			p1.textContent = `${/*map2*/ ctx[3][5]}  ${'  *****  '}  ${colorMap[2]}  ${' ** '}  ${colorMap[2][3]}`;
     			t17 = space();
     			img = element("img");
     			t18 = space();
     			p2 = element("p");
-    			p2.textContent = `${'map2 Dimensions: '}  ${gridsize}  ${' by '}  ${gridsize}`;
+    			p2.textContent = `${'map2 Dimensions: '}  ${gridSize}  ${' by '}  ${gridSize}`;
     			t26 = space();
     			p3 = element("p");
     			p3.textContent = `${'map2.flattend Dimensions: '}  ${/*map2*/ ctx[3].length}`;
@@ -16918,57 +16918,57 @@ var app = (function () {
     }
 
     const src = 'images/narrow.png';
-    const gridsize = 301;
+    const gridSize = 301;
     const idatal = 0;
-    const canvasmapwidth = 450;
-    const canvasmapheight = 310;
+    const canvasMapWidth = 450;
+    const canvasMapHeight = 310;
 
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let { name } = $$props;
     	const two = addTwoNums(11, 22);
-    	const [map2, min, max] = getflatarray(gridsize);
+    	const [map2, min, max] = getFlatArray(gridSize);
     	let canvas;
 
     	onMount(() => {
-    		const bwidth = 3;
+    		const bWidth = 3;
     		const ctx = canvas.getContext('2d');
-    		const imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
+    		const imageData = ctx.getImageData(bWidth, bWidth, gridSize, gridSize);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
-    			imageData.data[p + 0] = colormap[map2[p / 4]][0];
-    			imageData.data[p + 1] = colormap[map2[p / 4]][1];
-    			imageData.data[p + 2] = colormap[map2[p / 4]][2];
+    			imageData.data[p + 0] = colorMap[map2[p / 4]][0];
+    			imageData.data[p + 1] = colorMap[map2[p / 4]][1];
+    			imageData.data[p + 2] = colorMap[map2[p / 4]][2];
     			imageData.data[p + 3] = 255;
     		}
 
-    		ctx.putImageData(imageData, bwidth, bwidth);
-    		const scaleheight = colormap.length - 1;
-    		const scalewdith = 40;
-    		const colorscale = ctx.getImageData(0, 0, scalewdith, scaleheight);
+    		ctx.putImageData(imageData, bWidth, bWidth);
+    		const scaleHeight = colorMap.length - 1;
+    		const scaleWidth = 40;
+    		const colorScale = ctx.getImageData(0, 0, scaleWidth, scaleHeight);
 
-    		for (let row = 0; row < scaleheight; row++) {
-    			for (let col = 0; col < scalewdith; col++) {
-    				const posi = col * 4 + row * 4 * scalewdith;
-    				const cmaposi = colormap.length - row - 1;
-    				colorscale.data[posi + 0] = colormap[cmaposi][0];
-    				colorscale.data[posi + 1] = colormap[cmaposi][1];
-    				colorscale.data[posi + 2] = colormap[cmaposi][2];
-    				colorscale.data[posi + 3] = 255;
+    		for (let row = 0; row < scaleHeight; row++) {
+    			for (let col = 0; col < scaleWidth; col++) {
+    				const posi = col * 4 + row * 4 * scaleWidth;
+    				const cmaposi = colorMap.length - row - 1;
+    				colorScale.data[posi + 0] = colorMap[cmaposi][0];
+    				colorScale.data[posi + 1] = colorMap[cmaposi][1];
+    				colorScale.data[posi + 2] = colorMap[cmaposi][2];
+    				colorScale.data[posi + 3] = 255;
     				console.log(row, col, posi);
     			}
     		}
 
-    		console.log('total gridsize: ' + colorscale.data.length);
-    		console.log('scale width: ' + scalewdith);
-    		console.log('scale height: ' + scaleheight);
-    		const vposi = (canvasmapheight - colormap.length) / 2;
-    		ctx.putImageData(colorscale, 340, vposi);
+    		console.log('total gridsize: ' + colorScale.data.length);
+    		console.log('scale width: ' + scaleWidth);
+    		console.log('scale height: ' + scaleHeight);
+    		const vposi = (canvasMapHeight - colorMap.length) / 2;
+    		ctx.putImageData(colorScale, 340, vposi);
 
     		//var section2 = ctx.getImageData(200, bwidth, gridsize, gridsize);
     		//ctx.putImageData(imageData, 200, bwidth);
-    		const textctr = 340 + scalewdith / 2;
+    		const textctr = 340 + scaleWidth / 2;
 
     		ctx.font = '16px Arial';
     		ctx.textAlign = 'center';
@@ -16976,7 +16976,7 @@ var app = (function () {
     		ctx.fillText('WFE P-to-V: ', textctr, vposi - 40);
     		ctx.font = '12px Arial';
     		ctx.fillText('Max: ' + max.toFixed(3), textctr, vposi - 5);
-    		ctx.fillText('Min: ' + min.toFixed(3), textctr, vposi + colormap.length + 15);
+    		ctx.fillText('Min: ' + min.toFixed(3), textctr, vposi + colorMap.length + 15);
     	});
 
     	const writable_props = ['name'];
@@ -16998,19 +16998,19 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		addTwoNums,
-    		getarray,
-    		getflatarray,
-    		colormap,
+    		getArray,
+    		getFlatArray,
+    		colorMap,
     		name,
     		two,
     		src,
-    		gridsize,
+    		gridSize,
     		map2,
     		min,
     		max,
     		idatal,
-    		canvasmapwidth,
-    		canvasmapheight,
+    		canvasMapWidth,
+    		canvasMapHeight,
     		onMount,
     		canvas
     	});
