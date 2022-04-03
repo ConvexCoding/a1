@@ -35,6 +35,9 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function action_destroyer(action_result) {
+        return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
+    }
     function append(target, node) {
         target.appendChild(node);
     }
@@ -71,14 +74,6 @@ var app = (function () {
     let current_component;
     function set_current_component(component) {
         current_component = component;
-    }
-    function get_current_component() {
-        if (!current_component)
-            throw new Error('Function called outside component initialization');
-        return current_component;
-    }
-    function onMount(fn) {
-        get_current_component().$$.on_mount.push(fn);
     }
 
     const dirty_components = [];
@@ -163,10 +158,27 @@ var app = (function () {
         }
     }
     const outroing = new Set();
+    let outros;
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
             block.i(local);
+        }
+    }
+    function transition_out(block, local, detach, callback) {
+        if (block && block.o) {
+            if (outroing.has(block))
+                return;
+            outroing.add(block);
+            outros.c.push(() => {
+                outroing.delete(block);
+                if (callback) {
+                    if (detach)
+                        block.d(1);
+                    callback();
+                }
+            });
+            block.o(local);
         }
     }
 
@@ -175,6 +187,9 @@ var app = (function () {
         : typeof globalThis !== 'undefined'
             ? globalThis
             : global);
+    function create_component(block) {
+        block && block.c();
+    }
     function mount_component(component, target, anchor, customElement) {
         const { fragment, on_mount, on_destroy, after_update } = component.$$;
         fragment && fragment.m(target, anchor);
@@ -16012,55 +16027,6 @@ var app = (function () {
     const zeroDir = new Vector3D(0.0, 0.0, 1.0);
     // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
     // this will only be useful I guess until the GPU calculators get going???
-    function GenWfeMapBits(lens, refocus, halfCa, gridsize) {
-        var wfemap = new Array();
-        let inc = (2.0 * halfCa) / (gridsize - 1);
-        const diag = halfCa * halfCa * 1.0001; // add a little extra to make sure and get the cardinal points
-        let min = 1e20;
-        let max = -1e20;
-        let ctx = 0;
-        let sum = 0;
-        let sumsum = 0;
-        for (let row = 0; row < gridsize; row++) {
-            wfemap[row] = new Array();
-            for (let col = 0; col < gridsize; col++) {
-                let x = -halfCa + row * inc;
-                let y = -halfCa + col * inc;
-                if (diag > x * x + y * y) {
-                    let p = new Vector3D(x, y, 0.0);
-                    wfemap[row][col] = calcWfeVecs(p, zeroDir, lens, refocus);
-                    if (wfemap[row][col] < min) {
-                        min = wfemap[row][col];
-                    }
-                    if (wfemap[row][col] > max) {
-                        max = wfemap[row][col];
-                    }
-                    sum += wfemap[row][col];
-                    sumsum += wfemap[row][col] * wfemap[row][col];
-                    ctx += 1;
-                }
-                else
-                    wfemap[row][col] = NaN;
-            }
-        }
-        let varirms = sqrt((sumsum - (sum * sum) / ctx) / (ctx - 1.0));
-        let diff = max - min;
-        // put into array
-        for (let row = 0; row < gridsize; row++) {
-            for (let col = 0; col < gridsize; col++) {
-                if (!isNaN(wfemap[row][col])) {
-                    wfemap[row][col] = round((122.0 * (wfemap[row][col] - min)) / diff);
-                }
-                else {
-                    wfemap[row][col] = 123;
-                }
-            }
-        }
-        console.log('Mapper WFE RMS: ' + varirms);
-        return [wfemap, min, max];
-    }
-    // this function can be used to produce a WFE grid that can be turned into a bitmap or 2d wavefront map
-    // this will only be useful I guess until the GPU calculators get going???
     function GenFlatWfeMapBits(lens, refocus, halfCa, gridsize) {
         var wfemap = new Array();
         let inc = (2.0 * halfCa) / (gridsize - 1);
@@ -16652,17 +16618,6 @@ var app = (function () {
         }
     }
 
-    function addTwoNums(n1, n2) {
-        return n1 + n2;
-    }
-    function getArray(gridsize) {
-        const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
-        const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
-        const mat = Material.fromString('FusedSilica');
-        const lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
-        const [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
-        return newmap;
-    }
     function getFlatArray(gridsize) {
         const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
         const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
@@ -16799,116 +16754,56 @@ var app = (function () {
         [255, 255, 255],
     ];
 
-    /* src/App.svelte generated by Svelte v3.46.4 */
+    /* src/WavefrontMap.svelte generated by Svelte v3.46.4 */
 
     const { console: console_1 } = globals;
-    const file = "src/App.svelte";
+    const file$1 = "src/WavefrontMap.svelte";
 
-    function create_fragment(ctx) {
-    	let main;
-    	let h1;
-    	let t0;
-    	let t1;
-    	let t2;
-    	let t3;
-    	let p0;
-    	let t7;
-    	let p1;
-    	let t9;
-    	let img;
-    	let img_src_value;
-    	let t10;
-    	let p2;
-    	let t12;
-    	let p3;
-    	let t14;
-    	let p4;
-    	let t16;
-    	let canvas_1;
+    function create_fragment$1(ctx) {
+    	let canvas;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
-    			main = element("main");
-    			h1 = element("h1");
-    			t0 = text("Hello - ");
-    			t1 = text(/*name*/ ctx[0]);
-    			t2 = text("!");
-    			t3 = space();
-    			p0 = element("p");
-    			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
-    			t7 = space();
-    			p1 = element("p");
-    			p1.textContent = `${`${/*map2*/ ctx[3][5]}   *****  ${colorMap[2]} ** ${colorMap[2][3]}`}`;
-    			t9 = space();
-    			img = element("img");
-    			t10 = space();
-    			p2 = element("p");
-    			p2.textContent = `${`map2 Dimensions: ${gridSize} by ${gridSize}`}`;
-    			t12 = space();
-    			p3 = element("p");
-    			p3.textContent = `${`map2.flattend Dimensions: ${/*map2*/ ctx[3].length}`}`;
-    			t14 = space();
-    			p4 = element("p");
-    			p4.textContent = `${`image data length: ${idatal}`}`;
-    			t16 = space();
-    			canvas_1 = element("canvas");
-    			attr_dev(h1, "class", "svelte-hwvtry");
-    			add_location(h1, file, 56, 2, 2293);
-    			add_location(p0, file, 57, 2, 2320);
-    			add_location(p1, file, 58, 2, 2382);
-    			if (!src_url_equal(img.src, img_src_value = src)) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "alt", "");
-    			attr_dev(img, "class", "svelte-hwvtry");
-    			add_location(img, file, 60, 2, 2452);
-    			add_location(p2, file, 62, 2, 2476);
-    			add_location(p3, file, 63, 2, 2533);
-    			add_location(p4, file, 64, 2, 2587);
-    			attr_dev(canvas_1, "width", "450");
-    			attr_dev(canvas_1, "height", "310");
-    			attr_dev(canvas_1, "class", "svelte-hwvtry");
-    			add_location(canvas_1, file, 66, 2, 2630);
-    			attr_dev(main, "class", "svelte-hwvtry");
-    			add_location(main, file, 55, 0, 2284);
+    			canvas = element("canvas");
+    			attr_dev(canvas, "width", /*canvasMapWidth*/ ctx[0]);
+    			attr_dev(canvas, "height", /*canvasMapHeight*/ ctx[1]);
+    			attr_dev(canvas, "class", "svelte-itw1tz");
+    			add_location(canvas, file$1, 51, 0, 2122);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, main, anchor);
-    			append_dev(main, h1);
-    			append_dev(h1, t0);
-    			append_dev(h1, t1);
-    			append_dev(h1, t2);
-    			append_dev(main, t3);
-    			append_dev(main, p0);
-    			append_dev(main, t7);
-    			append_dev(main, p1);
-    			append_dev(main, t9);
-    			append_dev(main, img);
-    			append_dev(main, t10);
-    			append_dev(main, p2);
-    			append_dev(main, t12);
-    			append_dev(main, p3);
-    			append_dev(main, t14);
-    			append_dev(main, p4);
-    			append_dev(main, t16);
-    			append_dev(main, canvas_1);
-    			/*canvas_1_binding*/ ctx[4](canvas_1);
+    			insert_dev(target, canvas, anchor);
+
+    			if (!mounted) {
+    				dispose = action_destroyer(/*drawWavefrontMap*/ ctx[2].call(null, canvas));
+    				mounted = true;
+    			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
+    			if (dirty & /*canvasMapWidth*/ 1) {
+    				attr_dev(canvas, "width", /*canvasMapWidth*/ ctx[0]);
+    			}
+
+    			if (dirty & /*canvasMapHeight*/ 2) {
+    				attr_dev(canvas, "height", /*canvasMapHeight*/ ctx[1]);
+    			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(main);
-    			/*canvas_1_binding*/ ctx[4](null);
+    			if (detaching) detach_dev(canvas);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment.name,
+    		id: create_fragment$1.name,
     		type: "component",
     		source: "",
     		ctx
@@ -16917,23 +16812,20 @@ var app = (function () {
     	return block;
     }
 
-    const src = 'images/narrow.png';
-    const gridSize = 301;
-    const idatal = 0;
-    const canvasMapWidth = 450;
-    const canvasMapHeight = 310;
-
-    function instance($$self, $$props, $$invalidate) {
+    function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots('App', slots, []);
-    	let { name } = $$props;
-    	const two = addTwoNums(11, 22);
-    	const [map2, min, max] = getFlatArray(gridSize);
-    	let canvas;
+    	validate_slots('WavefrontMap', slots, []);
+    	let { gridSize } = $$props;
+    	let { canvasMapWidth } = $$props;
+    	let { canvasMapHeight } = $$props;
+    	let { map2 } = $$props;
+    	let { min } = $$props;
+    	let { max } = $$props;
 
-    	onMount(() => {
+    	// https://svelte.dev/tutorial/actions
+    	function drawWavefrontMap(node) {
     		const bWidth = 3;
-    		const ctx = canvas.getContext('2d');
+    		const ctx = node.getContext('2d');
     		const imageData = ctx.getImageData(bWidth, bWidth, gridSize, gridSize);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
@@ -16977,54 +16869,297 @@ var app = (function () {
     		ctx.font = '12px Arial';
     		ctx.fillText(`Max: ${max.toFixed(3)}`, textctr, vposi - 5);
     		ctx.fillText(`Min: ${min.toFixed(3)}`, textctr, vposi + colorMap.length + 15);
-    	});
-
-    	const writable_props = ['name'];
-
-    	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
-    	});
-
-    	function canvas_1_binding($$value) {
-    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
-    			canvas = $$value;
-    			$$invalidate(1, canvas);
-    		});
     	}
 
+    	const writable_props = ['gridSize', 'canvasMapWidth', 'canvasMapHeight', 'map2', 'min', 'max'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<WavefrontMap> was created with unknown prop '${key}'`);
+    	});
+
     	$$self.$$set = $$props => {
-    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
+    		if ('gridSize' in $$props) $$invalidate(3, gridSize = $$props.gridSize);
+    		if ('canvasMapWidth' in $$props) $$invalidate(0, canvasMapWidth = $$props.canvasMapWidth);
+    		if ('canvasMapHeight' in $$props) $$invalidate(1, canvasMapHeight = $$props.canvasMapHeight);
+    		if ('map2' in $$props) $$invalidate(4, map2 = $$props.map2);
+    		if ('min' in $$props) $$invalidate(5, min = $$props.min);
+    		if ('max' in $$props) $$invalidate(6, max = $$props.max);
     	};
 
     	$$self.$capture_state = () => ({
-    		addTwoNums,
-    		getArray,
-    		getFlatArray,
     		colorMap,
-    		name,
-    		two,
-    		src,
     		gridSize,
+    		canvasMapWidth,
+    		canvasMapHeight,
     		map2,
     		min,
     		max,
-    		idatal,
-    		canvasMapWidth,
-    		canvasMapHeight,
-    		onMount,
-    		canvas
+    		drawWavefrontMap
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('canvas' in $$props) $$invalidate(1, canvas = $$props.canvas);
+    		if ('gridSize' in $$props) $$invalidate(3, gridSize = $$props.gridSize);
+    		if ('canvasMapWidth' in $$props) $$invalidate(0, canvasMapWidth = $$props.canvasMapWidth);
+    		if ('canvasMapHeight' in $$props) $$invalidate(1, canvasMapHeight = $$props.canvasMapHeight);
+    		if ('map2' in $$props) $$invalidate(4, map2 = $$props.map2);
+    		if ('min' in $$props) $$invalidate(5, min = $$props.min);
+    		if ('max' in $$props) $$invalidate(6, max = $$props.max);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [name, canvas, two, map2, canvas_1_binding];
+    	return [canvasMapWidth, canvasMapHeight, drawWavefrontMap, gridSize, map2, min, max];
+    }
+
+    class WavefrontMap extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {
+    			gridSize: 3,
+    			canvasMapWidth: 0,
+    			canvasMapHeight: 1,
+    			map2: 4,
+    			min: 5,
+    			max: 6
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "WavefrontMap",
+    			options,
+    			id: create_fragment$1.name
+    		});
+
+    		const { ctx } = this.$$;
+    		const props = options.props || {};
+
+    		if (/*gridSize*/ ctx[3] === undefined && !('gridSize' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'gridSize'");
+    		}
+
+    		if (/*canvasMapWidth*/ ctx[0] === undefined && !('canvasMapWidth' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'canvasMapWidth'");
+    		}
+
+    		if (/*canvasMapHeight*/ ctx[1] === undefined && !('canvasMapHeight' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'canvasMapHeight'");
+    		}
+
+    		if (/*map2*/ ctx[4] === undefined && !('map2' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'map2'");
+    		}
+
+    		if (/*min*/ ctx[5] === undefined && !('min' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'min'");
+    		}
+
+    		if (/*max*/ ctx[6] === undefined && !('max' in props)) {
+    			console_1.warn("<WavefrontMap> was created without expected prop 'max'");
+    		}
+    	}
+
+    	get gridSize() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set gridSize(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get canvasMapWidth() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set canvasMapWidth(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get canvasMapHeight() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set canvasMapHeight(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get map2() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set map2(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get min() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set min(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get max() {
+    		throw new Error("<WavefrontMap>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set max(value) {
+    		throw new Error("<WavefrontMap>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src/App.svelte generated by Svelte v3.46.4 */
+    const file = "src/App.svelte";
+
+    function create_fragment(ctx) {
+    	let main;
+    	let h1;
+    	let t0;
+    	let t1;
+    	let t2;
+    	let t3;
+    	let img;
+    	let img_src_value;
+    	let t4;
+    	let p0;
+    	let t6;
+    	let p1;
+    	let t8;
+    	let wavefrontmap;
+    	let current;
+
+    	wavefrontmap = new WavefrontMap({
+    			props: {
+    				gridSize,
+    				canvasMapWidth,
+    				canvasMapHeight,
+    				map2: /*map2*/ ctx[1],
+    				min: /*min*/ ctx[2],
+    				max: /*max*/ ctx[3]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		c: function create() {
+    			main = element("main");
+    			h1 = element("h1");
+    			t0 = text("Hello - ");
+    			t1 = text(/*name*/ ctx[0]);
+    			t2 = text("!");
+    			t3 = space();
+    			img = element("img");
+    			t4 = space();
+    			p0 = element("p");
+    			p0.textContent = `${`map2 Dimensions: ${gridSize} by ${gridSize}`}`;
+    			t6 = space();
+    			p1 = element("p");
+    			p1.textContent = `${`map2.flattend Dimensions: ${/*map2*/ ctx[1].length}`}`;
+    			t8 = space();
+    			create_component(wavefrontmap.$$.fragment);
+    			attr_dev(h1, "class", "svelte-1uhufrc");
+    			add_location(h1, file, 11, 2, 310);
+    			if (!src_url_equal(img.src, img_src_value = src)) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", "");
+    			attr_dev(img, "class", "svelte-1uhufrc");
+    			add_location(img, file, 13, 2, 338);
+    			add_location(p0, file, 15, 2, 362);
+    			add_location(p1, file, 16, 2, 419);
+    			attr_dev(main, "class", "svelte-1uhufrc");
+    			add_location(main, file, 10, 0, 301);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, main, anchor);
+    			append_dev(main, h1);
+    			append_dev(h1, t0);
+    			append_dev(h1, t1);
+    			append_dev(h1, t2);
+    			append_dev(main, t3);
+    			append_dev(main, img);
+    			append_dev(main, t4);
+    			append_dev(main, p0);
+    			append_dev(main, t6);
+    			append_dev(main, p1);
+    			append_dev(main, t8);
+    			mount_component(wavefrontmap, main, null);
+    			current = true;
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (!current || dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(wavefrontmap.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(wavefrontmap.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(main);
+    			destroy_component(wavefrontmap);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    const src = 'images/narrow.png';
+    const gridSize = 301;
+    const canvasMapWidth = 450;
+    const canvasMapHeight = 310;
+
+    function instance($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('App', slots, []);
+    	let { name } = $$props;
+    	const [map2, min, max] = getFlatArray(gridSize);
+    	const writable_props = ['name'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
+    	});
+
+    	$$self.$$set = $$props => {
+    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		getFlatArray,
+    		WavefrontMap,
+    		name,
+    		src,
+    		gridSize,
+    		canvasMapWidth,
+    		canvasMapHeight,
+    		map2,
+    		min,
+    		max
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('name' in $$props) $$invalidate(0, name = $$props.name);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [name, map2, min, max];
     }
 
     class App extends SvelteComponentDev {
@@ -17043,7 +17178,7 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*name*/ ctx[0] === undefined && !('name' in props)) {
-    			console_1.warn("<App> was created without expected prop 'name'");
+    			console.warn("<App> was created without expected prop 'name'");
     		}
     	}
 
