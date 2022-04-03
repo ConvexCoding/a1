@@ -16656,23 +16656,23 @@ var app = (function () {
         return n1 + n2;
     }
     function getarray(gridsize) {
-        let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
-        let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
-        let mat = Material.fromString('FusedSilica');
-        let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
-        let [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
+        const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
+        const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
+        const mat = Material.fromString('FusedSilica');
+        const lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
+        const [newmap, min, max] = GenWfeMapBits(lens, -0.711, 10.0, gridsize);
         return newmap;
     }
     function getflatarray(gridsize) {
-        let surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
-        let surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
-        let mat = Material.fromString('FusedSilica');
-        let lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
-        let [newmap, min, max] = GenFlatWfeMapBits(lens, -0.58, 10.0, gridsize);
+        const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0);
+        const surf2 = new Surface(25, -1000, 0.0, 0.0, 0.0);
+        const mat = Material.fromString('FusedSilica');
+        const lens = new Lens(25, 5, mat, 1.07, surf1, surf2);
+        const [newmap, min, max] = GenFlatWfeMapBits(lens, -0.58, 10.0, gridsize);
         return [newmap, min, max];
     }
 
-    let colormap = [
+    const colormap = [
         [40, 0, 60],
         [50, 0, 70],
         [60, 0, 80],
@@ -16838,37 +16838,37 @@ var app = (function () {
     			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = `${/*map2*/ ctx[5][5]}  ${"  *****  "}  ${colormap[2]}  ${" ** "}  ${colormap[2][3]}`;
+    			p1.textContent = `${/*map2*/ ctx[3][5]}  ${'  *****  '}  ${colormap[2]}  ${' ** '}  ${colormap[2][3]}`;
     			t17 = space();
     			img = element("img");
     			t18 = space();
     			p2 = element("p");
-    			p2.textContent = `${"map2 Dimensions: "}  ${/*gridsize*/ ctx[4]}  ${" by "}  ${/*gridsize*/ ctx[4]}`;
+    			p2.textContent = `${'map2 Dimensions: '}  ${gridsize}  ${' by '}  ${gridsize}`;
     			t26 = space();
     			p3 = element("p");
-    			p3.textContent = `${"map2.flattend Dimensions: "}  ${/*map2*/ ctx[5].length}`;
+    			p3.textContent = `${'map2.flattend Dimensions: '}  ${/*map2*/ ctx[3].length}`;
     			t30 = space();
     			p4 = element("p");
-    			p4.textContent = `${"image data length: "}  ${/*idatal*/ ctx[6]}`;
+    			p4.textContent = `${'image data length: '}  ${idatal}`;
     			t34 = space();
     			canvas_1 = element("canvas");
     			attr_dev(h1, "class", "svelte-hwvtry");
-    			add_location(h1, file, 56, 2, 2263);
-    			add_location(p0, file, 57, 2, 2290);
-    			add_location(p1, file, 58, 2, 2352);
-    			if (!src_url_equal(img.src, img_src_value = /*src*/ ctx[3])) attr_dev(img, "src", img_src_value);
+    			add_location(h1, file, 56, 2, 2293);
+    			add_location(p0, file, 57, 2, 2320);
+    			add_location(p1, file, 58, 2, 2382);
+    			if (!src_url_equal(img.src, img_src_value = src)) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
     			attr_dev(img, "class", "svelte-hwvtry");
-    			add_location(img, file, 60, 2, 2426);
-    			add_location(p2, file, 61, 2, 2449);
-    			add_location(p3, file, 62, 2, 2511);
-    			add_location(p4, file, 63, 2, 2565);
+    			add_location(img, file, 60, 2, 2456);
+    			add_location(p2, file, 62, 2, 2480);
+    			add_location(p3, file, 63, 2, 2542);
+    			add_location(p4, file, 64, 2, 2596);
     			attr_dev(canvas_1, "width", "450");
     			attr_dev(canvas_1, "height", "310");
     			attr_dev(canvas_1, "class", "svelte-hwvtry");
-    			add_location(canvas_1, file, 64, 2, 2607);
+    			add_location(canvas_1, file, 66, 2, 2639);
     			attr_dev(main, "class", "svelte-hwvtry");
-    			add_location(main, file, 55, 0, 2254);
+    			add_location(main, file, 55, 0, 2284);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -16893,7 +16893,7 @@ var app = (function () {
     			append_dev(main, p4);
     			append_dev(main, t34);
     			append_dev(main, canvas_1);
-    			/*canvas_1_binding*/ ctx[7](canvas_1);
+    			/*canvas_1_binding*/ ctx[4](canvas_1);
     		},
     		p: function update(ctx, [dirty]) {
     			if (dirty & /*name*/ 1) set_data_dev(t1, /*name*/ ctx[0]);
@@ -16902,7 +16902,7 @@ var app = (function () {
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
-    			/*canvas_1_binding*/ ctx[7](null);
+    			/*canvas_1_binding*/ ctx[4](null);
     		}
     	};
 
@@ -16917,23 +16917,24 @@ var app = (function () {
     	return block;
     }
 
+    const src = 'images/narrow.png';
+    const gridsize = 301;
+    const idatal = 0;
+    const canvasmapwidth = 450;
+    const canvasmapheight = 310;
+
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
-    	let two = addTwoNums(11, 22);
     	let { name } = $$props;
-    	let src = "images/narrow.png";
-    	let gridsize = 301;
-    	let [map2, min, max] = getflatarray(gridsize);
-    	let idatal = 0;
-    	let canvasmapwidth = 450;
-    	let canvasmapheight = 310;
+    	const two = addTwoNums(11, 22);
+    	const [map2, min, max] = getflatarray(gridsize);
     	let canvas;
 
     	onMount(() => {
     		const bwidth = 3;
-    		const ctx = canvas.getContext("2d");
-    		var imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
+    		const ctx = canvas.getContext('2d');
+    		const imageData = ctx.getImageData(bwidth, bwidth, gridsize, gridsize);
 
     		for (let p = 0; p < imageData.data.length; p += 4) {
     			imageData.data[p + 0] = colormap[map2[p / 4]][0];
@@ -16943,14 +16944,14 @@ var app = (function () {
     		}
 
     		ctx.putImageData(imageData, bwidth, bwidth);
-    		let scaleheight = colormap.length - 1;
-    		var scalewdith = 40;
-    		var colorscale = ctx.getImageData(0, 0, scalewdith, scaleheight);
+    		const scaleheight = colormap.length - 1;
+    		const scalewdith = 40;
+    		const colorscale = ctx.getImageData(0, 0, scalewdith, scaleheight);
 
     		for (let row = 0; row < scaleheight; row++) {
     			for (let col = 0; col < scalewdith; col++) {
-    				let posi = col * 4 + row * 4 * scalewdith;
-    				let cmaposi = colormap.length - row - 1;
+    				const posi = col * 4 + row * 4 * scalewdith;
+    				const cmaposi = colormap.length - row - 1;
     				colorscale.data[posi + 0] = colormap[cmaposi][0];
     				colorscale.data[posi + 1] = colormap[cmaposi][1];
     				colorscale.data[posi + 2] = colormap[cmaposi][2];
@@ -16959,23 +16960,23 @@ var app = (function () {
     			}
     		}
 
-    		console.log("total gridsize: " + colorscale.data.length);
-    		console.log("scale width: " + scalewdith);
-    		console.log("scale height: " + scaleheight);
-    		let vposi = (canvasmapheight - colormap.length) / 2;
+    		console.log('total gridsize: ' + colorscale.data.length);
+    		console.log('scale width: ' + scalewdith);
+    		console.log('scale height: ' + scaleheight);
+    		const vposi = (canvasmapheight - colormap.length) / 2;
     		ctx.putImageData(colorscale, 340, vposi);
 
     		//var section2 = ctx.getImageData(200, bwidth, gridsize, gridsize);
     		//ctx.putImageData(imageData, 200, bwidth);
-    		let textctr = 340 + scalewdith / 2;
+    		const textctr = 340 + scalewdith / 2;
 
-    		ctx.font = "16px Arial";
-    		ctx.textAlign = "center";
-    		ctx.fillStyle = "#000";
-    		ctx.fillText("WFE P-to-V: ", textctr, vposi - 40);
-    		ctx.font = "12px Arial";
-    		ctx.fillText("Max: " + max.toFixed(3), textctr, vposi - 5);
-    		ctx.fillText("Min: " + min.toFixed(3), textctr, vposi + colormap.length + 15);
+    		ctx.font = '16px Arial';
+    		ctx.textAlign = 'center';
+    		ctx.fillStyle = '#000';
+    		ctx.fillText('WFE P-to-V: ', textctr, vposi - 40);
+    		ctx.font = '12px Arial';
+    		ctx.fillText('Max: ' + max.toFixed(3), textctr, vposi - 5);
+    		ctx.fillText('Min: ' + min.toFixed(3), textctr, vposi + colormap.length + 15);
     	});
 
     	const writable_props = ['name'];
@@ -17000,8 +17001,8 @@ var app = (function () {
     		getarray,
     		getflatarray,
     		colormap,
-    		two,
     		name,
+    		two,
     		src,
     		gridsize,
     		map2,
@@ -17015,16 +17016,7 @@ var app = (function () {
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('two' in $$props) $$invalidate(2, two = $$props.two);
     		if ('name' in $$props) $$invalidate(0, name = $$props.name);
-    		if ('src' in $$props) $$invalidate(3, src = $$props.src);
-    		if ('gridsize' in $$props) $$invalidate(4, gridsize = $$props.gridsize);
-    		if ('map2' in $$props) $$invalidate(5, map2 = $$props.map2);
-    		if ('min' in $$props) min = $$props.min;
-    		if ('max' in $$props) max = $$props.max;
-    		if ('idatal' in $$props) $$invalidate(6, idatal = $$props.idatal);
-    		if ('canvasmapwidth' in $$props) canvasmapwidth = $$props.canvasmapwidth;
-    		if ('canvasmapheight' in $$props) canvasmapheight = $$props.canvasmapheight;
     		if ('canvas' in $$props) $$invalidate(1, canvas = $$props.canvas);
     	};
 
@@ -17032,7 +17024,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [name, canvas, two, src, gridsize, map2, idatal, canvas_1_binding];
+    	return [name, canvas, two, map2, canvas_1_binding];
     }
 
     class App extends SvelteComponentDev {
