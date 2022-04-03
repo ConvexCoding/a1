@@ -1,9 +1,10 @@
-export function addTwoNums(n1: number, n2: number): number {
-  return n1 + n2
-}
 import { GenWfeMapBits, GenFlatWfeMapBits } from './lib/mappers'
 import { Lens, Surface } from './lib/lens'
 import Material from './lib/material'
+
+export function addTwoNums(n1: number, n2: number): number {
+  return n1 + n2
+}
 
 export function getarray(gridsize: number): number[][] {
   const surf1 = new Surface(25, 44.966, 0.0, 0.0, 0.0)
