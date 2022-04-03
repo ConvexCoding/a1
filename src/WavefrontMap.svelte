@@ -1,5 +1,6 @@
 <script lang="ts">
   import { colorMap } from './lib/colormap'
+  import hash from 'object-hash'
 
   export let gridSize: number
   export let canvasMapWidth: number
@@ -7,6 +8,9 @@
   export let map2: number[]
   export let min: number
   export let max: number
+
+  // force re-render when these probs change
+  $: refreshKey = hash({ gridSize, canvasMapHeight, map2, min, max })
 
   // https://svelte.dev/tutorial/actions
   function drawWavefrontMap(node: HTMLCanvasElement) {
@@ -57,7 +61,9 @@
   }
 </script>
 
-<canvas use:drawWavefrontMap width={canvasMapWidth} height={canvasMapHeight} />
+{#key refreshKey}
+  <canvas use:drawWavefrontMap width={canvasMapWidth} height={canvasMapHeight} />
+{/key}
 
 <style>
   canvas {
