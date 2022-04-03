@@ -16814,16 +16814,16 @@ var app = (function () {
     	let p0;
     	let t7;
     	let p1;
-    	let t17;
+    	let t9;
     	let img;
     	let img_src_value;
-    	let t18;
+    	let t10;
     	let p2;
-    	let t26;
+    	let t12;
     	let p3;
-    	let t30;
+    	let t14;
     	let p4;
-    	let t34;
+    	let t16;
     	let canvas_1;
 
     	const block = {
@@ -16838,19 +16838,19 @@ var app = (function () {
     			p0.textContent = `Add two numbers produces ${/*two*/ ctx[2]} as sum of 11 plus 22.`;
     			t7 = space();
     			p1 = element("p");
-    			p1.textContent = `${/*map2*/ ctx[3][5]}  ${'  *****  '}  ${colorMap[2]}  ${' ** '}  ${colorMap[2][3]}`;
-    			t17 = space();
+    			p1.textContent = `${`${/*map2*/ ctx[3][5]}   *****  ${colorMap[2]} ** ${colorMap[2][3]}`}`;
+    			t9 = space();
     			img = element("img");
-    			t18 = space();
+    			t10 = space();
     			p2 = element("p");
-    			p2.textContent = `${'map2 Dimensions: '}  ${gridSize}  ${' by '}  ${gridSize}`;
-    			t26 = space();
+    			p2.textContent = `${`map2 Dimensions: ${gridSize} by ${gridSize}`}`;
+    			t12 = space();
     			p3 = element("p");
-    			p3.textContent = `${'map2.flattend Dimensions: '}  ${/*map2*/ ctx[3].length}`;
-    			t30 = space();
+    			p3.textContent = `${`map2.flattend Dimensions: ${/*map2*/ ctx[3].length}`}`;
+    			t14 = space();
     			p4 = element("p");
-    			p4.textContent = `${'image data length: '}  ${idatal}`;
-    			t34 = space();
+    			p4.textContent = `${`image data length: ${idatal}`}`;
+    			t16 = space();
     			canvas_1 = element("canvas");
     			attr_dev(h1, "class", "svelte-hwvtry");
     			add_location(h1, file, 56, 2, 2293);
@@ -16859,14 +16859,14 @@ var app = (function () {
     			if (!src_url_equal(img.src, img_src_value = src)) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
     			attr_dev(img, "class", "svelte-hwvtry");
-    			add_location(img, file, 60, 2, 2456);
-    			add_location(p2, file, 62, 2, 2480);
-    			add_location(p3, file, 63, 2, 2542);
-    			add_location(p4, file, 64, 2, 2596);
+    			add_location(img, file, 60, 2, 2452);
+    			add_location(p2, file, 62, 2, 2476);
+    			add_location(p3, file, 63, 2, 2533);
+    			add_location(p4, file, 64, 2, 2587);
     			attr_dev(canvas_1, "width", "450");
     			attr_dev(canvas_1, "height", "310");
     			attr_dev(canvas_1, "class", "svelte-hwvtry");
-    			add_location(canvas_1, file, 66, 2, 2639);
+    			add_location(canvas_1, file, 66, 2, 2630);
     			attr_dev(main, "class", "svelte-hwvtry");
     			add_location(main, file, 55, 0, 2284);
     		},
@@ -16883,15 +16883,15 @@ var app = (function () {
     			append_dev(main, p0);
     			append_dev(main, t7);
     			append_dev(main, p1);
-    			append_dev(main, t17);
+    			append_dev(main, t9);
     			append_dev(main, img);
-    			append_dev(main, t18);
+    			append_dev(main, t10);
     			append_dev(main, p2);
-    			append_dev(main, t26);
+    			append_dev(main, t12);
     			append_dev(main, p3);
-    			append_dev(main, t30);
+    			append_dev(main, t14);
     			append_dev(main, p4);
-    			append_dev(main, t34);
+    			append_dev(main, t16);
     			append_dev(main, canvas_1);
     			/*canvas_1_binding*/ ctx[4](canvas_1);
     		},
@@ -16975,8 +16975,8 @@ var app = (function () {
     		ctx.fillStyle = '#000';
     		ctx.fillText('WFE P-to-V: ', textctr, vposi - 40);
     		ctx.font = '12px Arial';
-    		ctx.fillText('Max: ' + max.toFixed(3), textctr, vposi - 5);
-    		ctx.fillText('Min: ' + min.toFixed(3), textctr, vposi + colorMap.length + 15);
+    		ctx.fillText(`Max: ${max.toFixed(3)}`, textctr, vposi - 5);
+    		ctx.fillText(`Min: ${min.toFixed(3)}`, textctr, vposi + colorMap.length + 15);
     	});
 
     	const writable_props = ['name'];
