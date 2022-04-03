@@ -58,21 +58,21 @@
     ctx.fillStyle = '#000'
     ctx.fillText('WFE P-to-V: ', textctr, vposi - 40)
     ctx.font = '12px Arial'
-    ctx.fillText('Max: ' + max.toFixed(3), textctr, vposi - 5)
-    ctx.fillText('Min: ' + min.toFixed(3), textctr, vposi + colorMap.length + 15)
+    ctx.fillText(`Max: ${max.toFixed(3)}`, textctr, vposi - 5)
+    ctx.fillText(`Min: ${min.toFixed(3)}`, textctr, vposi + colorMap.length + 15)
   })
 </script>
 
 <main>
   <h1>Hello - {name}!</h1>
   <p>Add two numbers produces {two} as sum of 11 plus 22.</p>
-  <p>{map2[5]} {'  *****  '} {colorMap[2]} {' ** '} {colorMap[2][3]}</p>
+  <p>{`${map2[5]}   *****  ${colorMap[2]} ** ${colorMap[2][3]}`}</p>
 
   <img {src} alt="" />
 
-  <p>{'map2 Dimensions: '} {gridSize} {' by '} {gridSize}</p>
-  <p>{'map2.flattend Dimensions: '} {map2.length}</p>
-  <p>{'image data length: '} {idatal}</p>
+  <p>{`map2 Dimensions: ${gridSize} by ${gridSize}`}</p>
+  <p>{`map2.flattend Dimensions: ${map2.length}`}</p>
+  <p>{`image data length: ${idatal}`}</p>
 
   <canvas bind:this={canvas} width="450" height="310" />
 </main>
